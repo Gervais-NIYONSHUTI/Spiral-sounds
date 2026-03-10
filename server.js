@@ -1,16 +1,12 @@
-import express from "express"
+import express from 'express'
+import { startups } from './data/data.js'
 
 const PORT = 8000
 
 const app = express()
 
-const trainees = {
-    name: 'hope',
-    age: 24
-}
-
-app.get('/', (req, res) =>{
-    res.json(trainees)
+app.get('/api', (req, res) => {
+  res.json(startups)
 })
 
 app.listen(PORT, () => console.log('the site is connected to port: ' + PORT))
