@@ -4,6 +4,7 @@
   "description": "a dataset of the world’s most promising startups",
   "license": "ISC",
   "author": "Gervais NIYONSHUTI",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
