@@ -1,12 +1,22 @@
 import express from 'express'
-import { startups } from './data/data.js'
-
-const PORT = 8000
 
 const app = express()
+const PORT = 8000
+ 
+app.use(express.static('public'))
 
-app.get('/api', (req, res) => {
-  res.json(startups)
-})
+/*
+Challenge 2:
 
-app.listen(PORT, () => console.log('the site is connected to port: ' + PORT))
+- Handle any request to /api/products and pass it to productsRouter.
+
+- Save and reload the mini browser. 
+  You should see the results of the console.logs from productsControllers.js
+
+*/
+ 
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`)
+}).on('error', (err) => {
+  console.error('Failed to start server:', err)
+}) 
