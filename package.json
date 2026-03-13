@@ -4,11 +4,15 @@
   "description": "a dataset of the world’s most promising startups",
   "license": "ISC",
   "author": "Gervais NIYONSHUTI",
+  "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
   }
 }
