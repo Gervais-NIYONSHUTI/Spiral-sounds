@@ -8,11 +8,15 @@ export async function getGenres(req, res){
 }
 
 export async function getProducts(req, res){
-  const { genre } = req.query
-  console.log(genre)
-  let genres = ''
-  if(genre !== undefined) genres = db.prepare(`select * from products where genre = '${genre}'`)
-  else genres = db.prepare('select * from products')
-  res.json(genres.all())
+  const { genre} = req.query
+  let query = 'select * from products'
 
+  if (genre) {
+    query += ' where genre = ?'
+    const products = db.prepare(query).all(genre)
+    return res.json(products)
+  }
+
+  const products = db.prepare(query).all()
+  return res.json(products)
 }
