@@ -1,7 +1,6 @@
-import Database from 'better-sqlite3'
+import { db } from './db/dbConnection.js'
 
 // async function viewAllProducts(){
-    const db = new Database('database.db')
     const select = db.prepare('Select* from users')
     console.table(select.all())
 // }
