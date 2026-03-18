@@ -7,10 +7,9 @@ export async function getGenres(req, res){
   res.json(genresRows)
 }
 
-export async function getProducts(req, res){
+export function getProducts(req, res){
   const { genre, search } = req.query
   let query = 'select * from products'
-
   if (genre) {
     query += ' where genre = ?'
     const products = db.prepare(query).all(genre)

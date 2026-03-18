@@ -1,5 +1,6 @@
 import validator from 'validator'
 import { db } from '../db/dbConnection.js'
+import bcrypt from 'bcrypt'
 
 export async function registerUser(req, res){
     let { name, email, username, password} = req.body
@@ -9,6 +10,8 @@ export async function registerUser(req, res){
     name = name.trim()
     email = email.trim()
     username = username.trim()
+    const hashed = await bcrypt.hash(password, 10)
+
     if(!/^[a-zA-Z0-9_-]{1,20}$/.test(username)){
         res.status(400).json({error: "Username must be 1–20 characters, using letters, numbers, _ or -."})
     }
@@ -19,7 +22,8 @@ export async function registerUser(req, res){
     if(users.length){
         return res.status(400).json({ error: 'Email or username already in use.' })
     } else {
-        db.prepare("Insert into users (name, email, username, password) values(?,?,?,?)").run(name, email, username, password)
+        const result = db.prepare("Insert into users (name, email, username, password) values(?,?,?,?)").run(name, email, username, hashed)
+        req.session.userID = result.lastInsertRowid
         res.status(201).json({ message: 'User registered'})
     }
 }
