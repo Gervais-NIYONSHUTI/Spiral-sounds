@@ -27,3 +27,23 @@ export async function registerUser(req, res){
         res.status(201).json({ message: 'User registered'})
     }
 }
+export async function loginUser(req, res){
+     let { username, password } = req.body
+     if( !username || !password){
+        res.status(400).json({error: "All fields are required"})
+    }
+    username = username.trim()
+    let user = db.prepare('SELECT * FROM users WHERE username = ?').all(username)
+
+    if (!user.length) {
+      return res.status(401).json({ error: 'Invalid credentials'} )
+    }
+    user = user[0]
+    const isValid = await bcrypt.compare(password, user.password)
+    if(!isValid){
+        return res.status(401).json({ error: 'Invalid credentials'} )
+    }
+    req.session.userID = user.id
+    res.json({ message: 'Logged in' })
+
+}
