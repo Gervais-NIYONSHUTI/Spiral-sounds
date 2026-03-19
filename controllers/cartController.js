@@ -6,7 +6,6 @@ export function addToCart(req, res) {
         return res.status(400).json({ error: 'Invalid product ID' })
     }
     const userId = req.session.userID
-    console.log(req.session, userId)
     const existing = db.prepare('SELECT * FROM cart_items WHERE user_id = ? AND product_id = ?').get(userId, productId)
     if (existing) {
         db.prepare('UPDATE cart_items SET quantity = quantity + 1 WHERE id = ?').run(existing.id)
