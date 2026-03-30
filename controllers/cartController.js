@@ -14,6 +14,7 @@ export function addToCart(req, res) {
     }
     res.json({ message: "Added to cart" })
 }
+
 export async function getCartCount(req, res) {
   const result = db.prepare(`SELECT SUM(quantity) AS totalItems FROM cart_items WHERE user_id = ?`).get(req.session.userID)
   res.json({ totalItems: result.totalItems || 0 })
@@ -26,4 +27,18 @@ export async function getAll(req, res) {
     const result = db.prepare(`SELECT ci.id AS cartItemId, ci.quantity, p.title, p.artist, p.price FROM cart_items ci JOIN products p ON p.id = ci.product_id WHERE ci.user_id = ?`).all(req.session.userID)
     console.log(result)
     res.json({items: result})
+}
+
+export async function deleteItem(req, res) {
+    const itemId = parseInt(req.params.itemId, 10)
+    console.log(itemId)
+    if(isNaN(itemId)){
+        return res.status(400).json({error: "Invalid item ID"})
+    }
+    const item = db.prepare('SELECT quantity FROM cart_items WHERE id = ? AND user_id = ?').get(itemId, req.session.userID)
+    if (!item) {
+      return res.status(400).json({error: 'Item not found'})
+    }
+    const del = db.prepare('DELETE FROM cart_items WHERE id = ? AND user_id = ?').run(itemId, req.session.userID)
+    res.status(204).send()
 }
