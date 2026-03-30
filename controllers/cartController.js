@@ -31,7 +31,6 @@ export async function getAll(req, res) {
 
 export async function deleteItem(req, res) {
     const itemId = parseInt(req.params.itemId, 10)
-    console.log(itemId)
     if(isNaN(itemId)){
         return res.status(400).json({error: "Invalid item ID"})
     }
@@ -40,5 +39,10 @@ export async function deleteItem(req, res) {
       return res.status(400).json({error: 'Item not found'})
     }
     const del = db.prepare('DELETE FROM cart_items WHERE id = ? AND user_id = ?').run(itemId, req.session.userID)
+    res.status(204).send()
+}
+
+export async function deleteAll(req, res) {
+    const delAll = db.prepare('DELETE FROM cart_items WHERE user_id = ?').run(req.session.userID)
     res.status(204).send()
 }
