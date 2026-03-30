@@ -21,9 +21,6 @@ export async function getCartCount(req, res) {
 }
 
 export async function getAll(req, res) {
-    if(!req.session.userID) {
-        return res.json({err: "not logged in"})
-    }
     const result = db.prepare(`SELECT ci.id AS cartItemId, ci.quantity, p.title, p.artist, p.price FROM cart_items ci JOIN products p ON p.id = ci.product_id WHERE ci.user_id = ?`).all(req.session.userID)
     console.log(result)
     res.json({items: result})
