@@ -7,12 +7,20 @@ export async function getGenres(req, res){
   res.json(genresRows)
 }
 
-export async function getProducts(req, res){
-  const { genre } = req.query
-  console.log(genre)
-  let genres = ''
-  if(genre !== undefined) genres = db.prepare(`select * from products where genre = '${genre}'`)
-  else genres = db.prepare('select * from products')
-  res.json(genres.all())
+export function getProducts(req, res){
+  const { genre, search } = req.query
+  let query = 'select * from products'
+  if (genre) {
+    query += ' where genre = ?'
+    const products = db.prepare(query).all(genre)
+    return res.json(products)
+  } else if(search){
+    query += ' WHERE title LIKE ? OR artist LIKE ? OR genre LIKE ?'
+    const searchPattern = `%${search}%`
+    const products = db.prepare(query).all(searchPattern, searchPattern, searchPattern)
+    return res.json(products)
+  }
 
+  const products = db.prepare(query).all()
+  return res.json(products)
 }
