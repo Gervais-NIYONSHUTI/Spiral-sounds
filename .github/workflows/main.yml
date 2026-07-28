@@ -1,0 +1,47 @@
+name: Auto Update Timestamp
+
+on:
+  # 1. Triggers the action three times a day automatically
+  schedule:
+    - cron: '0 0,6,12,18 * * *'  # Runs at 12 AM, 6 AM, 12 PM and 6 PM UTC
+
+  # 2. Keeps the option to run whenever you manually push code
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'timestamp.txt'
+
+  # 3. Adds a manual trigger button in GitHub UI just in case
+  workflow_dispatch:
+
+jobs:
+  update-file:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Modify File
+        run: |
+          # Get the last commit message safely (defaults to "Scheduled Run" if no message exists)
+          COMMIT_MSG=$(git log -1 --pretty=%B || echo "Scheduled Trigger")
+          
+          # Get current timestamp
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          # Append the data
+          echo "Timestamp: $TIMESTAMP | Commit Message: $COMMIT_MSG" >> timestamp.txt
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are actual changes before committing to prevent empty commit errors
+          git diff --quiet && git diff --staged --quiet || (git add timestamp.txt && git commit -m "chore: automated timestamp update [skip ci]" && git push)
